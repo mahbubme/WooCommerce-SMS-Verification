@@ -119,6 +119,12 @@ class Woocommerce_SMS_Verification {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-woocommerce-sms-verification-public.php';
 
+		/**
+		 * autoload.php file location
+		 * Load required libaries using composer autoload file
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/vendor/autoload.php';
+
 		$this->loader = new Woocommerce_SMS_Verification_Loader();
 
 	}
@@ -153,6 +159,7 @@ class Woocommerce_SMS_Verification {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'woocommerce_sms_verification_menu' );
 
 	}
 
@@ -169,6 +176,9 @@ class Woocommerce_SMS_Verification {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_action( 'woocommerce_register_form_start', $plugin_public, 'wsv_wooc_extra_register_fields' );
+		$this->loader->add_action( 'woocommerce_register_post', $plugin_public, 'wsv_wooc_validate_extra_register_fields', 10, 3 );
+		$this->loader->add_action( 'woocommerce_created_customer', $plugin_public, 'wsv_wooc_save_extra_register_fields' );
 
 	}
 
@@ -211,5 +221,6 @@ class Woocommerce_SMS_Verification {
 	public function get_version() {
 		return $this->version;
 	}
+
 
 }

@@ -17,7 +17,7 @@
  * Plugin URI:        https://wordpress.org/plugins/woocommerce-sms-verification/
  * Description:       Verify customer mobile number on the checkout page.
  * Version:           1.0.0
- * Author:            Mahbubur Rahman
+ * Author:            Mahbubur Rahman Rabbi
  * Author URI:        https://mahbub.me
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
@@ -29,6 +29,13 @@
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
+
+
+/*
+ * Assign global variables
+ */
+
+$wsv_options = array();
 
 /**
  * The code that runs during plugin activation.

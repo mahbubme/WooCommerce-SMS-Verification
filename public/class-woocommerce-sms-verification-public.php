@@ -100,4 +100,55 @@ class Woocommerce_SMS_Verification_Public {
 
 	}
 
+
+	/**
+	 *Add extra fields to WooCommerce registration form
+	 *
+	 * @since 1.0.0
+	 * @author Mahbubur Rahman Rabbi <mail@mahbub.me>
+	 */
+	public function wsv_wooc_extra_register_fields() {
+		?>
+			<p class="form-row form-row-wide">
+				<label for="wsv_reg_phone"><?php _e( 'Verify phone number', 'woocommerce-sms-verification' ); ?></label>
+				<input type="text" class="input-text" name="wsv_reg_phone" id="wsv_reg_phone" value="<?php if ( ! empty( $_POST['wsv_reg_phone'] ) ) esc_attr_e( $_POST['wsv_reg_phone'] ); ?>" placeholder="Enter your mobile number" />
+				<small>( e.g: +880123456789 )</small>
+			</p>
+			<div class="clear"></div>
+		<?php
+	}
+
+
+	/**
+ 	* WooCommerce extra register fields validating.
+ 	*
+ 	* @since  1.0.0
+ 	* @author Mabubur Rahman Rabbi <mail@mahbub.me>
+	*/
+	public function wsv_wooc_validate_extra_register_fields( $username, $email, $validation_errors ) {
+	 
+	    if ( isset( $_POST['wsv_reg_phone'] ) && empty( $_POST['wsv_reg_phone'] ) ) {
+	 		
+	 		$validation_errors->add( 'wsv_reg_phone_error', __( '<strong>Error</strong>: Phone verify is required', 'woocommerce-sms-verification' ) );
+	 
+	    }
+	      
+	    return $validation_errors;
+	}
+
+	/**
+	* Below code save extra fields.
+	*
+	* @since 1.0.0
+	* @author Mabubur Rahman Rabbi <mail@mahbub.me>
+	*/
+	public function wsv_wooc_save_extra_register_fields( $customer_id ) {
+	    
+	    if ( isset( $_POST['wsv_reg_phone'] ) ) {
+	        // Phone input filed which is used in WooCommerce
+	        update_user_meta( $customer_id, 'wsv_reg_phone', sanitize_text_field( $_POST['wsv_reg_phone'] ) );
+	    }
+	
+	}
+
 }
