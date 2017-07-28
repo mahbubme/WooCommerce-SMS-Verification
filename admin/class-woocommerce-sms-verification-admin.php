@@ -40,6 +40,9 @@ class Woocommerce_SMS_Verification_Admin {
 	 */
 	private $version;
 
+
+	private $woocommerce_sms_verification_options_page;
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -51,7 +54,6 @@ class Woocommerce_SMS_Verification_Admin {
 
 		$this->woocommerce_sms_verification = $woocommerce_sms_verification;
 		$this->version = $version;
-
 	}
 
 	/**
@@ -99,5 +101,75 @@ class Woocommerce_SMS_Verification_Admin {
 		wp_enqueue_script( $this->woocommerce_sms_verification, plugin_dir_url( __FILE__ ) . 'js/woocommerce-sms-verification-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
+
+
+	/**
+	 * Add a link to our plugin in the admin menu
+ 	 * under 'Settings > WooCommerce SMS Verification'
+ 	 * 
+	 */
+	public function woocommerce_sms_verification_menu() {
+
+		/**
+		 * Use the add_options_page function
+	 	 * add_options_page( $page_title, $menu_title, $capability, $menu_slug, $function )
+		 */
+		add_options_page(
+			'WooCommerce SMS Verification',
+			'WooCommerce SMS Verification',
+			'manage_options',
+			'woocommerce-sms-verification',
+			array( $this, 'woocommerce_sms_verification_options_page' )
+
+		);
+	}
+
+
+	/**
+	 * Include admin pages
+	 */
+	public function woocommerce_sms_verification_options_page() {
+
+		if ( !current_user_can( 'manage_options' ) ) {
+			wp_die( 'You do not have sufficient permissions to access this page.' );	
+		}
+
+		global $wsv_options;
+
+		if ( isset( $_POST['wsv_gateways_form_submitted'] ) ) {
+			
+			$hidden_field = esc_html( $_POST['wsv_gateways_form_submitted'] );
+
+			if ( $hidden_field === 'Y' ) {
+				
+				$twilio_account_sid = esc_html( $_POST['wsv_twilio_account_sid'] );
+				$twilio_auth_token = esc_html( $_POST['wsv_twilio_auth_token'] );
+				$twilio_phone_number = esc_html( $_POST['wsv_twilio_phone_number'] );
+
+				$wsv_options['twilio_account_sid'] = $twilio_account_sid;
+				$wsv_options['twilio_auth_token'] = $twilio_auth_token;
+				$wsv_options['twilio_phone_number'] = $twilio_phone_number;
+
+				update_option( 'wsv_options', $wsv_options );
+			}
+
+		}
+
+		$wsv_options = get_option( 'wsv_options' );
+
+		if ( $wsv_options != '' ) {
+			
+			$twilio_account_sid = $wsv_options['twilio_account_sid'];
+			$twilio_auth_token = $wsv_options['twilio_auth_token'];
+			$twilio_phone_number = $wsv_options['twilio_phone_number'];
+			
+		}
+
+
+		
+		require_once('partials/woocommerce-sms-verification-options-page.php');
+	}
+
+
 
 }
